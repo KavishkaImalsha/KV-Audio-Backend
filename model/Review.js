@@ -1,30 +1,26 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-const userSchema = new mongoose.Schema({
+const reviewSchema = new mongoose.Schema({
     email : {
         type : String,
         required : true,
-        unique : true
     },
-    password : {
+    name : {
+        type : String,
+        required : true
+    },
+    comment : {
         type : String,
         required : true,
     },
-    role : {
+    rating : {
         type : String,
-        default : "customer"
+        required : true
     },
-    firstName : {
-        type : String,
+    isApproved : {
+        type : Boolean,
         required : true,
-    },
-    lastName : {
-        type : String,
-        required : true,
-    },
-    phoneNumber : {
-        type : String,
-        required : true,
+        default : false
     },
     profilePicture : {
         type : String,
@@ -33,6 +29,6 @@ const userSchema = new mongoose.Schema({
     }
 })
 
-const User = mongoose.model('users', userSchema)
+const Review = mongoose.model('reviews', reviewSchema)
 
-export default User
+export default Review

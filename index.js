@@ -5,6 +5,7 @@ import userRoutes from "./routes/userRoutes.js"
 import productRoutes from "./routes/productsRoutes.js"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
+import reviewRoutes from "./routes/reviewRoutes.js"
 
 dotenv.config()
 
@@ -16,7 +17,7 @@ app.use((request, response, next) => {
     
     if(token != null){
         token = token.replace('Bearer ', '')
-        jwt.verify(token, 'KV-Screate-20!', (error, decode) => {
+        jwt.verify(token, process.env.ENC_PASS, (error, decode) => {
             if(!error){
                 request.user = decode  
             }else{
@@ -41,8 +42,13 @@ connection.once('open', () => {
 
 app.use('/api/user', userRoutes)
 app.use('/api/product', productRoutes)
+app.use('/api/reviews', reviewRoutes)
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 })
 
+// "email": "exampleuser@gmail.com",
+//   "password": "securepassword123",
+// "email": "exampleuseradmin@gmail.com",
+//   "password": "securepassword123",

@@ -38,7 +38,8 @@ export const userLogin = (request, response) => {
                 firstName : user.firstName,
                 lastName : user.lastName,
                 email : user.email,
-                role : user.role
+                role : user.role,
+                profilePicture : user.profilePicture
             }, process.env.ENC_PASS)
             response.json({
                 message : "User login successfully",
