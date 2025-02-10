@@ -1,6 +1,7 @@
 import bycrypt from "bcrypt"
 import User from "../model/User.js"
 import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
 
 export const registerUser = (request, response) => {
     const userData = request.body
@@ -38,7 +39,7 @@ export const userLogin = (request, response) => {
                 lastName : user.lastName,
                 email : user.email,
                 role : user.role
-            }, "KV-Screate-20!")
+            }, process.env.ENC_PASS)
             response.json({
                 message : "User login successfully",
                 token : token
