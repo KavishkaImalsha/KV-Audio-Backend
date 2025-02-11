@@ -27,3 +27,22 @@ export const addReview = (request, response) => {
     })
 
 }
+
+export const getReviews = (request, response) => {
+    if(request.user == null){
+        response.status(401).json({
+            message : "Unauthorize user please login again"
+        })
+        return
+    }
+
+    if(request.user.role === "admin"){
+        Review.find().then((reviews) => {
+            response.json(reviews)
+        })
+    }else{
+        Review.find({isApproved : true}).then((reviews) => {
+            response.json(reviews)
+        })
+    }
+}
