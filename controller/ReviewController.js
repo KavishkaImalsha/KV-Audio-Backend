@@ -57,10 +57,7 @@ export const deleteReview = (request, response) => {
         })
         return
     }
-
-    console.log(request.user.role);
     
-
     if(request.user.role == "admin"){
         Review.deleteOne({
             email : email,
@@ -98,6 +95,31 @@ export const deleteReview = (request, response) => {
         })
     }
     
+}
+
+export const approveReview = (request, response) => {
+    const reviewId = request.params.reviewId
+
+    if(request.user.role != 'admin'){
+        response.json({
+            message : "You can't perform this action" 
+        })
+        return
+    }
+
+    Review.updateOne({
+        _id : reviewId
+    },{
+        isApproved : true
+    }).then(() => {
+        response.json({
+            message : "Review is approved successfully"
+        })
+    }).catch((error) => {
+        response.json({
+            error : error
+        })
+    })
 }
 
 // "_id": "67ab06753e2b81eb510261a0",
