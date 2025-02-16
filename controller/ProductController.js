@@ -28,3 +28,26 @@ export const addProduct = (request, response) => {
         })
     })
 }
+
+export const getProducts = async (request, response) => {
+    let isAdmin = true
+    let products
+    if(request.user == null){
+        response.status(401).json({
+            message : "Unauthorize user please login again"
+        })
+        return
+    }
+
+    if(request.user.role != 'admin'){
+        isAdmin = false
+    }
+    try{
+        isAdmin ? products = await Product.find() : products = await Product.find({availability : true})
+        response.json(products)
+    }catch(error){
+        response.status(500).json({
+            message : "Invernal server error! Please try again."
+        })
+    }
+}
