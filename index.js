@@ -41,12 +41,9 @@ connection.once('open', () => {
 })
 
 app.use('/api/user', userRoutes)
-app.use('/api/product', productRoutes)
+app.use('/api/products', productRoutes)
 app.use('/api/reviews', reviewRoutes)
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 })
-
-// "email": "exampleuseradmin@gmail.com",
-//   "password": "securepassword123",

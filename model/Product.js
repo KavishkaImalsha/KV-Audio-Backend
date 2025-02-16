@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
+    productId : {
+        type : String,
+        required : true,
+        unique : true
+    },
     name : {
         type : String,
         required : true
@@ -9,8 +14,25 @@ const productSchema = new mongoose.Schema({
         type : Number,
         required : true
     },
+    category : {
+        type : String,
+        required : true,
+        default : "Uncategorized"
+    },
+    dimension : {
+        type : String,
+        required : true
+    },
     discription : {
         type : String,
+        required : true
+    },
+    availability : {
+        type : Boolean,
+        required : true,
+    },
+    quantity : {
+        type : Number,
         required : true
     }
 })
