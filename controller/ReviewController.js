@@ -1,12 +1,7 @@
 import Review from "../model/Review.js"
 
 export const addReview = (request, response) => {
-    if(request.user == null){
-        response.status(401).json({
-            message : "Unauthorize user please login again"
-        })
-        return
-    }
+    UserAuth(request, response)
 
     const data = request.body
 
@@ -29,12 +24,7 @@ export const addReview = (request, response) => {
 }
 
 export const getReviews = (request, response) => {
-    if(request.user == null){
-        response.status(401).json({
-            message : "Unauthorize user please login again"
-        })
-        return
-    }
+    UserAuth(request, response)
 
     if(request.user.role === "admin"){
         Review.find().then((reviews) => {
@@ -51,12 +41,7 @@ export const deleteReview = (request, response) => {
     const reviewId = request.params.reviewId
     const email = request.params.email
 
-    if(request.user == null){
-        response.status(401).json({
-            message : "Unauthorize user please login again"
-        })
-        return
-    }
+    UserAuth(request, response)
     
     if(request.user.role == "admin"){
         Review.deleteOne({

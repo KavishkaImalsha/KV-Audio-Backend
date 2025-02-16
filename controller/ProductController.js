@@ -1,13 +1,9 @@
 import Product from "../model/Product.js"
+import { UserAuth } from "../validations/UserAuth.js"
 
 export const addProduct = (request, response) => {
     //check there was token
-    if(request.user == null){
-        response.status(401).json({
-            message : "Unauthorize user please login again"
-        })
-        return
-    }
+    UserAuth(request, response)
 
     if(request.user.role != 'admin'){
         response.status(401).json({
@@ -32,12 +28,7 @@ export const addProduct = (request, response) => {
 export const getProducts = async (request, response) => {
     let isAdmin = true
     let products
-    if(request.user == null){
-        response.status(401).json({
-            message : "Unauthorize user please login again"
-        })
-        return
-    }
+    UserAuth(request, response)
 
     if(request.user.role != 'admin'){
         isAdmin = false
