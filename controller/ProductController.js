@@ -42,3 +42,29 @@ export const getProducts = async (request, response) => {
         })
     }
 }
+
+export const updateProduct = async (request, response) => {
+    const productId = request.params.productId
+    UserAuth(request, response)
+
+    try{
+        if(request.user.role != 'admin'){
+            response.status(401).json({
+                message : "You can't perform this action"
+            })
+            return
+        }
+    
+        await Product.updateOne({productId : productId}, request.body)
+
+        response.json({
+            message : "Product updated successfully"
+        })
+    }catch(error){
+        response.status(500).json({
+            message : "Invernal server error! Please try again."
+        })
+    }
+
+
+}
