@@ -1,16 +1,13 @@
+import { verify } from "jsonwebtoken"
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
+import VerifyAdminRole from "../validations/verifyAdminRole.js"
 
 export const addProduct = (request, response) => {
     //check there was token
     UserAuth(request, response)
 
-    if(request.user.role != 'admin'){
-        response.status(401).json({
-             message : "User can't perform this action"
-        })
-        return
-    }
+    VerifyAdminRole(request, response)
 
     const productDetails = request.body
     const product = new Product(productDetails)
@@ -48,12 +45,7 @@ export const updateProduct = async (request, response) => {
     UserAuth(request, response)
 
     try{
-        if(request.user.role != 'admin'){
-            response.status(401).json({
-                message : "You can't perform this action"
-            })
-            return
-        }
+        VerifyAdminRole(request, response)
     
         await Product.updateOne({productId : productId}, request.body)
 

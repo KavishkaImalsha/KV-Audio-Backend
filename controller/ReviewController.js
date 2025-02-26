@@ -1,4 +1,6 @@
 import Review from "../model/Review.js"
+import VerifyAdminRole from "../validations/verifyAdminRole.js"
+import { UserAuth } from "../validations/UserAuth.js"
 
 export const addReview = (request, response) => {
     UserAuth(request, response)
@@ -85,12 +87,7 @@ export const deleteReview = (request, response) => {
 export const approveReview = (request, response) => {
     const reviewId = request.params.reviewId
 
-    if(request.user.role != 'admin'){
-        response.json({
-            message : "You can't perform this action" 
-        })
-        return
-    }
+    VerifyAdminRole(request, response)
 
     Review.updateOne({
         _id : reviewId
