@@ -39,7 +39,8 @@ export const userLogin = (request, response) => {
                 lastName : user.lastName,
                 email : user.email,
                 role : user.role,
-                profilePicture : user.profilePicture
+                profilePicture : user.profilePicture,
+                phoneNumber : user.phoneNumber
             }, process.env.ENC_PASS)
             response.json({
                 message : "User login successfully",
@@ -51,4 +52,14 @@ export const userLogin = (request, response) => {
             })
         }
     })
+}
+
+export const isRoleCustomer = (request) => {
+    let isCustomer = false
+
+    if(request.user.role == 'customer'){
+        isCustomer = true
+    }
+
+    return isCustomer
 }

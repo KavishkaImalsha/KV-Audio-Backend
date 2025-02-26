@@ -1,4 +1,3 @@
-import { verify } from "jsonwebtoken"
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
 import VerifyAdminRole from "../validations/verifyAdminRole.js"

@@ -6,6 +6,7 @@ import productRoutes from "./routes/productsRoutes.js"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 import reviewRoutes from "./routes/reviewRoutes.js"
+import inquiriesRoutes from "./routes/inquiriesRoutes.js"
 
 dotenv.config()
 
@@ -43,6 +44,7 @@ connection.once('open', () => {
 app.use('/api/user', userRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/reviews', reviewRoutes)
+app.use('/api/inquiries', inquiriesRoutes)
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
