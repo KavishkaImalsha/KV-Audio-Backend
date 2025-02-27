@@ -1,5 +1,6 @@
 import Inquiry from "../model/Inquiry.js"
-import { isRoleCustomer } from "./UserController.js"
+import { UserAuth } from "../validations/UserAuth.js"
+import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
 export const addInquiry = async(request, response) => {
     try{
@@ -29,4 +30,19 @@ export const addInquiry = async(request, response) => {
             message : "Internal server error"
         })
     }
+}
+
+export const getInquiries = async (request, response) => {
+    UserAuth(request, response)
+    let inquries
+    if(isRoleCustomer(request)){
+        inquries = await Inquiry.find({email : request.user.email})
+    }
+    else if(isRoleAdmin(request)){
+        inquries = await Inquiry.find()
+    }
+
+    response.json({
+        inquiries : inquries
+    })
 }

@@ -54,6 +54,16 @@ export const userLogin = (request, response) => {
     })
 }
 
+export const isRoleAdmin = (request) => {
+    let isAdmin = false
+
+    if(request.user.role == 'admin'){
+        isAdmin = true
+    }
+
+    return isAdmin
+}
+
 export const isRoleCustomer = (request) => {
     let isCustomer = false
 
