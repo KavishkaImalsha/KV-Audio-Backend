@@ -1,4 +1,5 @@
 import Inquiry from "../model/Inquiry.js"
+import User from "../model/User.js"
 import { UserAuth } from "../validations/UserAuth.js"
 import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
@@ -46,6 +47,46 @@ export const getInquiries = async (request, response) => {
         response.json({
             inquiries : inquries
         })
+    }catch(error){
+        response.status(500).json({
+            message : error
+        })
+    }
+}
+
+export const deleteInquiry = async (request, response) => {
+    try{
+        UserAuth(request, response)
+
+        const inquiryId = request.params.id
+
+        if(isRoleAdmin(request)){
+            await Inquiry.deleteOne({id : inquiryId})
+
+            response.json({
+                message : "Inquiry successfully deleted"
+            })
+        }else if(isRoleCustomer(request)){
+            const inquiry = await Inquiry.find({id : inquiryId})
+            
+            if(inquiry){
+                if(inquiry[0].email == request.user.email){
+                    await Inquiry.deleteOne({id : inquiryId})
+
+                    response.json({
+                        message : "Inquiry successfully deleted"
+                    })
+                }else{
+                    response.status(403).json({
+                        message : "You are not authorize to perform this action"
+                    })
+                }
+            }else{
+                response.status(404).json({
+                    message : "Inquiry not found"
+                })
+            }
+        }
     }catch(error){
         response.status(500).json({
             message : error
