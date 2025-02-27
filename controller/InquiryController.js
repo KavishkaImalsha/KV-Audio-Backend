@@ -49,7 +49,7 @@ export const getInquiries = async (request, response) => {
         })
     }catch(error){
         response.status(500).json({
-            message : error
+            message : "Internal server error"
         })
     }
 }
@@ -69,7 +69,7 @@ export const deleteInquiry = async (request, response) => {
         }else if(isRoleCustomer(request)){
             const inquiry = await Inquiry.find({id : inquiryId})
             
-            if(inquiry){
+            if(inquiry.length != 0){
                 if(inquiry[0].email == request.user.email){
                     await Inquiry.deleteOne({id : inquiryId})
 
@@ -89,7 +89,48 @@ export const deleteInquiry = async (request, response) => {
         }
     }catch(error){
         response.status(500).json({
-            message : error
+            message : "Internal server error"
+        })
+    }
+}
+
+export const updateInquiry = async(request, response) => {
+    try{
+        UserAuth(request, response)
+
+        const inquiryId = request.params.id
+        const data = request.body
+
+        if(isRoleAdmin(request)){
+            await Inquiry.updateOne({id : inquiryId}, data)
+
+            response.json({
+                message : "Inquiry successfully updated"
+            })
+        }else if(isRoleCustomer(request)){
+            const inquiry = await Inquiry.find({id : inquiryId})
+            
+            if(inquiry.length != 0){
+                if(inquiry[0].email == request.user.email){
+                    await Inquiry.updateOne({id : inquiryId}, {message : data.message})
+
+                    response.json({
+                        message : "Inquiry successfully updated"
+                    })
+                }else{
+                    response.status(403).json({
+                        message : "You are not authorize to perform this action"
+                    })
+                }
+            }else{
+                response.status(404).json({
+                    message : "Inquiry is not found"
+                })
+            }
+        }
+    }catch(error){
+        response.status(500).json({
+            message : "Internal server error"
         })
     }
 }
