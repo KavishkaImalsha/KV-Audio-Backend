@@ -33,16 +33,22 @@ export const addInquiry = async(request, response) => {
 }
 
 export const getInquiries = async (request, response) => {
-    UserAuth(request, response)
-    let inquries
-    if(isRoleCustomer(request)){
-        inquries = await Inquiry.find({email : request.user.email})
-    }
-    else if(isRoleAdmin(request)){
-        inquries = await Inquiry.find()
-    }
+    try{
+        UserAuth(request, response)
+        let inquries
+        if(isRoleCustomer(request)){
+            inquries = await Inquiry.find({email : request.user.email})
+        }
+        else if(isRoleAdmin(request)){
+            inquries = await Inquiry.find()
+        }
 
-    response.json({
-        inquiries : inquries
-    })
+        response.json({
+            inquiries : inquries
+        })
+    }catch(error){
+        response.status(500).json({
+            message : error
+        })
+    }
 }
