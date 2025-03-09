@@ -44,7 +44,8 @@ export const userLogin = (request, response) => {
             }, process.env.ENC_PASS)
             response.json({
                 message : "User login successfully",
-                token : token
+                token : token,
+                user: user
             })
         }else{
             response.status(401).json({
