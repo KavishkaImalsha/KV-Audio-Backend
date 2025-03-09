@@ -7,11 +7,13 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 import reviewRoutes from "./routes/reviewRoutes.js"
 import inquiriesRoutes from "./routes/inquiriesRoutes.js"
+import cors from 'cors'
 
 dotenv.config()
 
 const app = express()
 
+app.use(cors())
 app.use(bodyParser.json())
 app.use((request, response, next) => {
     let token = request.header('Authorization')
