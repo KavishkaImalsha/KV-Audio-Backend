@@ -56,6 +56,25 @@ export const updateProduct = async (request, response) => {
             message : "Invernal server error! Please try again."
         })
     }
+}
 
+export const deleteProduct = async(request, response) => {
+    const productId = request.params.productId
 
+    UserAuth(request, response)
+
+    try{
+        VerifyAdminRole(request, response)
+        
+        await Product.deleteOne({_id: productId})
+
+        response.json({
+            message: "Product successfully delete"
+        })
+
+    }catch(error){
+        response.status(500).json({
+            message: "Invernal server error! Please try again."
+        })
+    }
 }
