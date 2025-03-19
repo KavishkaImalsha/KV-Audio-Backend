@@ -1,5 +1,5 @@
 import Review from "../model/Review.js"
-import VerifyAdminRole from "../validations/verifyAdminRole.js"
+import VerifyAdminRole from "../validations/VerifyAdminRole.js"
 import { UserAuth } from "../validations/UserAuth.js"
 
 export const addReview = (request, response) => {
