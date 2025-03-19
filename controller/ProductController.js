@@ -1,6 +1,6 @@
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
-import VerifyAdminRole from "../validations/verifyAdminRole.js"
+import VerifyAdminRole from "../validations/VerifyAdminRole.js"
 
 export const addProduct = (request, response) => {
     //check there was token
