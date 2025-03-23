@@ -13,7 +13,13 @@ dotenv.config()
 
 const app = express()
 
-app.use(cors())
+const corsOptions = {
+    origin: "https://kv-audio-frontend-mauve.vercel.app", // Allow only your frontend
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // If using authentication (e.g., cookies, JWT)
+};
+  
+app.use(cors(corsOptions));
 app.use(bodyParser.json())
 app.use((request, response, next) => {
     let token = request.header('Authorization')

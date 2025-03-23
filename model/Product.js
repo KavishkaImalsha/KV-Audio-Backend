@@ -38,7 +38,7 @@ const productSchema = new mongoose.Schema({
     image : {
         type : [String],
         required : true,
-        default : ['https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fdefault-image-icon%3Fimage_type%3Dvector&psig=AOvVaw23yFJQ7K5V0o6jzVDKWy_A&ust=1739815970868000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCJiDsNnlyIsDFQAAAAAdAAAAABAE']
+        default : ['https://cdn.vectorstock.com/i/500p/33/47/no-photo-available-icon-default-image-symbol-vector-40343347.jpg']
     }
 })
 
