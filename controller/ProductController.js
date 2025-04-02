@@ -1,3 +1,4 @@
+import { response } from "express"
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
 import VerifyAdminRole from "../validations/VerifyAdminRole.js"
@@ -75,6 +76,18 @@ export const deleteProduct = async(request, response) => {
     }catch(error){
         response.status(500).json({
             message: "Invernal server error! Please try again."
+        })
+    }
+}
+
+export const getProduct = async(request, response) => {
+    try{
+        const productId = request.params.paroductId
+        const product = await Product.find(productId)
+        response.json(product)
+    }catch(error){
+        response.status(500).json({
+            error : error
         })
     }
 }
