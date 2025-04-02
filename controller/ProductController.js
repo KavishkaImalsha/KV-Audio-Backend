@@ -82,8 +82,9 @@ export const deleteProduct = async(request, response) => {
 
 export const getProduct = async(request, response) => {
     try{
-        const productId = request.params.paroductId
-        const product = await Product.find(productId)
+        const productId = request.params.productId
+      
+        const product = await Product.findOne({_id: productId})
         response.json(product)
     }catch(error){
         response.status(500).json({
