@@ -83,7 +83,7 @@ export const deleteProduct = async(request, response) => {
 export const getProduct = async(request, response) => {
     try{
         const productId = request.params.productId
-      
+        
         const product = await Product.findOne({_id: productId})
         response.json(product)
     }catch(error){
