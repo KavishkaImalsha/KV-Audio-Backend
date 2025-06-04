@@ -2,7 +2,7 @@ import bycrypt from "bcrypt"
 import User from "../model/User.js"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-
+dotenv.config()
 export const registerUser = (request, response) => {
     const userData = request.body
 
@@ -10,11 +10,11 @@ export const registerUser = (request, response) => {
     const user = new User(userData)
 
     user.save().then(() => {
-        response.json({
+        return response.status(200).json({
             message : "User registration successfully"
         })
     }).catch((error) => {
-        response.status(500).json({
+        return response.status(500).json({
             error : "User not registered"
         })
     })
@@ -27,7 +27,7 @@ export const userLogin = (request, response) => {
         email : credentials.email
     }).then((user) => {
         if(user === null){
-            response.status(404).json({
+            return response.status(404).json({
                 message : "User not found"
             })
         }
@@ -42,16 +42,21 @@ export const userLogin = (request, response) => {
                 profilePicture : user.profilePicture,
                 phoneNumber : user.phoneNumber
             }, process.env.ENC_PASS)
-            response.json({
+            return response.json({
                 message : "User login successfully",
                 token : token,
                 user: user
             })
         }else{
-            response.status(401).json({
+            return response.status(401).json({
                 message : "Login failed"
             })
         }
+    }).catch((error) => {
+        return response.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
     })
 }
 
