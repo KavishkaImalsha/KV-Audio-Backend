@@ -3,12 +3,11 @@ import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
 
 export const createOrder = async(request,response) => {
-    const orderDetails = {orderList : []}
+    const orderDetails = {products : []}
     let totalCost = 0
         
     UserAuth(request,response)
     const data = request.body
-    
     const userData = request.user
     orderDetails.email = userData.email
 
@@ -25,24 +24,24 @@ export const createOrder = async(request,response) => {
         orderDetails.orderId = currentOrderId
     }
 
-    for(const product of data.orderList){
-        const productDetails = await Product.findOne({productId: product.productId})
+    for(const product of data.products){
+        const productDetails = await Product.findOne({_id: product.productId})
         
         if(!productDetails){
-            response.json({
+            response.status(404).json({
                 message: "Invalid product"
             })
             return
         }
 
         if(!productDetails.availability){
-            response.json({
+            response.status(400).json({
                 message: "Product not available right now"
             })
             return
         }
         
-        orderDetails.orderList.push({
+        orderDetails.products.push({
             product: {
                 productId: productDetails.productId,
                 name: productDetails.name,
@@ -67,8 +66,6 @@ export const createOrder = async(request,response) => {
             message: "Order place successfully"
         })
     }catch(error){
-        console.log(error);
-        
         response.json({
             error: "Error occured, Order not placed"
         })
