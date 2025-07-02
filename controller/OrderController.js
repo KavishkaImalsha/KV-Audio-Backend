@@ -4,13 +4,15 @@ import { UserAuth } from "../validations/UserAuth.js"
 import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
 export const createOrder = async(request,response) => {
-    const orderDetails = {products : []}
+    const orderDetails = {orderList : []}
     let totalCost = 0
         
     UserAuth(request,response)
     const data = request.body
     const userData = request.user
     orderDetails.email = userData.email
+    console.log(data.products);
+    
 
     const lastOrder = await Order.find().sort({orderDate: -1}).limit(1)
 
@@ -42,7 +44,7 @@ export const createOrder = async(request,response) => {
             return
         }
         
-        orderDetails.products.push({
+        orderDetails.orderList.push({
             product: {
                 productId: productDetails.productId,
                 name: productDetails.name,
@@ -60,6 +62,8 @@ export const createOrder = async(request,response) => {
     orderDetails.days =  data.days
     orderDetails.startingDate = data.startingDate
     orderDetails.endingDate = data.endingDate
+    console.log(orderDetails);
+    
     try{
         const order = new Order(orderDetails)
         await order.save()
