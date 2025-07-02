@@ -1,6 +1,7 @@
 import Order from "../model/Order.js"
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
+import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
 export const createOrder = async(request,response) => {
     const orderDetails = {products : []}
@@ -62,12 +63,38 @@ export const createOrder = async(request,response) => {
     try{
         const order = new Order(orderDetails)
         await order.save()
-        response.json({
+        return response.json({
             message: "Order place successfully"
         })
     }catch(error){
-        response.json({
+        return response.json({
             error: "Error occured, Order not placed"
+        })
+    }
+}
+
+export const getOrders = async(request, response) => {
+    UserAuth(request,response)
+
+    const userEmail = request.user.email
+
+    try{
+        if(isRoleAdmin(request)){
+            const allOrders = await Order.find()
+
+            return response.status(200).json({
+                orders: allOrders 
+            })
+        }else if(isRoleCustomer(request)){
+            const userOrders = await Order.find({email: userEmail})
+            
+            return response.status(200).json({
+                orders: userOrders
+            })
+        }
+    }catch(error){
+        return response.status(500).json({
+            error: "Somthing went wrong" 
         })
     }
 }
