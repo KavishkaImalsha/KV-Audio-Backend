@@ -1,6 +1,7 @@
 import Order from "../model/Order.js"
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
+import VerifyAdminRole from "../validations/VerifyAdminRole.js"
 import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
 export const createOrder = async(request,response) => {
@@ -62,7 +63,6 @@ export const createOrder = async(request,response) => {
     orderDetails.days =  data.days
     orderDetails.startingDate = data.startingDate
     orderDetails.endingDate = data.endingDate
-    console.log(orderDetails);
     
     try{
         const order = new Order(orderDetails)
@@ -99,6 +99,49 @@ export const getOrders = async(request, response) => {
     }catch(error){
         return response.status(500).json({
             error: "Somthing went wrong" 
+        })
+    }
+} 
+
+export const confirmOrder = async(request, response) => {
+    const orderId = request.params.orderId
+
+    try{
+        if(isRoleAdmin(request)){
+            const order = await Order.findOne({orderId: orderId})
+            order.isApproval = true
+            order.save()
+
+            return response.status(200).json({
+                message: "Order confirmed successful"
+            })
+        }
+        return response.status(400).json({
+            message: "You can't perform this action"
+        })
+    }catch(error){
+        return response.status(500).json({
+            message: "Something went wrong"
+        })
+    }
+}
+
+export const deleteOrder = async(request,response) => {
+    const orderId = request.params.orderId
+
+    try{
+        if(isRoleAdmin(request)){
+            await Order.deleteOne({orderId: orderId})
+            return response.json({
+                message: "Order delete successful"
+            })
+        }
+        return response.json({
+            message: "You can't perform this action"
+        })
+    }catch(error){
+        return response.status(500).json({
+            message: "Something went wrong"
         })
     }
 }
