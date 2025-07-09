@@ -1,24 +1,28 @@
-import { response } from "express"
 import Product from "../model/Product.js"
 import { UserAuth } from "../validations/UserAuth.js"
-import VerifyAdminRole from "../validations/VerifyAdminRole.js"
+import { isRoleAdmin } from "./UserController.js"
 
 export const addProduct = (request, response) => {
     //check there was token
     UserAuth(request, response)
 
-    VerifyAdminRole(request, response)
+    //VerifyAdminRole(request, response)
 
     const productDetails = request.body
-    const product = new Product(productDetails)
-    product.save().then(() => {
-        response.json({
-            message : "Product add successfully"
+    if(isRoleAdmin(request)){
+        const product = new Product(productDetails)
+        product.save().then(() => {
+            return response.json({
+                message : "Product add successfully"
+            })
+        }).catch((error) => {
+            return response.status(500).json({
+                message : "Product not added"
+            })
         })
-    }).catch((error) => {
-        response.status(500).json({
-            error : "Product not added"
-        })
+    }
+    return response.status(400).json({
+        message: "You can't perform this action"
     })
 }
 
@@ -31,9 +35,9 @@ export const getProducts = async (request, response) => {
         }else{
             products = await Product.find({availability : true})
         }
-        response.json(products)
+        return response.json(products)
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Invernal server error! Please try again."
         })
     }
@@ -44,15 +48,19 @@ export const updateProduct = async (request, response) => {
     UserAuth(request, response)
 
     try{
-        VerifyAdminRole(request, response)
-    
-        await Product.updateOne({productId : productId}, request.body)
+        if(isRoleAdmin(request)){
+            await Product.updateOne({productId : productId}, request.body)
 
-        response.json({
-            message : "Product updated successfully"
+            return response.json({
+                message : "Product updated successfully"
+            })
+        }
+        return response.status(400).json({
+            message: "You can't perform this action"
         })
+        
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Invernal server error! Please try again."
         })
     }
@@ -64,14 +72,16 @@ export const deleteProduct = async(request, response) => {
     UserAuth(request, response)
 
     try{
-        VerifyAdminRole(request, response)
-        
-        await Product.deleteOne({_id: productId})
+        if(isRoleAdmin(request)){
+            await Product.deleteOne({_id: productId})
 
-        response.json({
-            message: "Product successfully delete"
+            return response.json({
+                message: "Product successfully delete"
+            })
+        }
+        return response.status(400).json({
+            message: "You can't perform this action"
         })
-
     }catch(error){
         response.status(500).json({
             message: "Invernal server error! Please try again."
