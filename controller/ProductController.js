@@ -9,6 +9,7 @@ export const addProduct = (request, response) => {
     //VerifyAdminRole(request, response)
 
     const productDetails = request.body
+    
     if(isRoleAdmin(request)){
         const product = new Product(productDetails)
         product.save().then(() => {
@@ -20,10 +21,11 @@ export const addProduct = (request, response) => {
                 message : "Product not added"
             })
         })
+    }else{
+            return response.status(400).json({
+            message: "You can't perform this action"
+        })
     }
-    return response.status(400).json({
-        message: "You can't perform this action"
-    })
 }
 
 export const getProducts = async (request, response) => {
@@ -54,10 +56,11 @@ export const updateProduct = async (request, response) => {
             return response.json({
                 message : "Product updated successfully"
             })
-        }
-        return response.status(400).json({
+        }else{
+            return response.status(400).json({
             message: "You can't perform this action"
         })
+    }
         
     }catch(error){
         return response.status(500).json({
@@ -78,10 +81,11 @@ export const deleteProduct = async(request, response) => {
             return response.json({
                 message: "Product successfully delete"
             })
-        }
-        return response.status(400).json({
+        }else{
+            return response.status(400).json({
             message: "You can't perform this action"
         })
+    }
     }catch(error){
         response.status(500).json({
             message: "Invernal server error! Please try again."
@@ -98,6 +102,26 @@ export const getProduct = async(request, response) => {
     }catch(error){
         response.status(500).json({
             error : error
+        })
+    }
+}
+
+export const getNewArrivals = async(request, response) => {
+    try{
+        const products =  await Product.find({availability: true}).sort({_id: -1}).limit(8)
+
+        if(products == null){
+            return response.status(500).json({
+                message: "Products not available"
+            })
+        }else{
+            return response.status(200).json({
+                products: products
+            })
+        }
+    }catch(error){
+        return response.status(500).json({
+            message: "Something went wrong"
         })
     }
 }
