@@ -1,11 +1,12 @@
 import express from "express"
 import { confirmOrder, createOrder, deleteOrder, getOrders } from "../controller/OrderController.js"
+import {UserAuthMiddleware} from "../middlewares/UserAuthMiddleware.js"
 
 const orderRoutes = express.Router()
 
-orderRoutes.post('/', createOrder)
+orderRoutes.post('/', UserAuthMiddleware, createOrder)
 
-orderRoutes.get('/',getOrders)
+orderRoutes.get('/', UserAuthMiddleware, getOrders)
 
 orderRoutes.put('/:orderId',confirmOrder)
 

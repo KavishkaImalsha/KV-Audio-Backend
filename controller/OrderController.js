@@ -1,14 +1,11 @@
 import Order from "../model/Order.js"
 import Product from "../model/Product.js"
-import { UserAuth } from "../validations/UserAuth.js"
-import VerifyAdminRole from "../validations/VerifyAdminRole.js"
 import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
 export const createOrder = async(request,response) => {
     const orderDetails = {orderList : []}
     let totalCost = 0
-        
-    UserAuth(request,response)
+
     const data = request.body
     const userData = request.user
     orderDetails.email = userData.email
@@ -78,7 +75,6 @@ export const createOrder = async(request,response) => {
 }
 
 export const getOrders = async(request, response) => {
-    UserAuth(request,response)
 
     const userEmail = request.user.email
 

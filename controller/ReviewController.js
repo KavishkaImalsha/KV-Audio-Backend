@@ -1,10 +1,7 @@
 import Review from "../model/Review.js"
 import VerifyAdminRole from "../validations/VerifyAdminRole.js"
-import { UserAuth } from "../validations/UserAuth.js"
 
 export const addReview = (request, response) => {
-    UserAuth(request, response)
-
     const data = request.body
 
     data.email = request.user.email
@@ -26,8 +23,6 @@ export const addReview = (request, response) => {
 }
 
 export const getReviews = (request, response) => {
-    UserAuth(request, response)
-
     if(request.user.role === "admin"){
         Review.find().then((reviews) => {
             response.json(reviews)
@@ -42,8 +37,6 @@ export const getReviews = (request, response) => {
 export const deleteReview = (request, response) => {
     const reviewId = request.params.reviewId
     const email = request.params.email
-
-    UserAuth(request, response)
     
     if(request.user.role == "admin"){
         Review.deleteOne({

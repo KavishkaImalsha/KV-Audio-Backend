@@ -1,13 +1,7 @@
 import Product from "../model/Product.js"
-import { UserAuth } from "../validations/UserAuth.js"
 import { isRoleAdmin } from "./UserController.js"
 
 export const addProduct = (request, response) => {
-    //check there was token
-    UserAuth(request, response)
-
-    //VerifyAdminRole(request, response)
-
     const productDetails = request.body
     
     if(isRoleAdmin(request)){
@@ -47,8 +41,6 @@ export const getProducts = async (request, response) => {
 
 export const updateProduct = async (request, response) => {
     const productId = request.params.productId
-    UserAuth(request, response)
-
     try{
         if(isRoleAdmin(request)){
             await Product.updateOne({productId : productId}, request.body)
@@ -72,8 +64,6 @@ export const updateProduct = async (request, response) => {
 export const deleteProduct = async(request, response) => {
     const productId = request.params.productId
 
-    UserAuth(request, response)
-
     try{
         if(isRoleAdmin(request)){
             await Product.deleteOne({_id: productId})
@@ -87,7 +77,7 @@ export const deleteProduct = async(request, response) => {
         })
     }
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message: "Invernal server error! Please try again."
         })
     }
@@ -98,9 +88,9 @@ export const getProduct = async(request, response) => {
         const productId = request.params.productId
         
         const product = await Product.findOne({_id: productId})
-        response.json(product)
+        return response.json(product)
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             error : error
         })
     }
