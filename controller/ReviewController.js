@@ -22,14 +22,21 @@ export const addReview = (request, response) => {
 
 }
 
-export const getReviews = (request, response) => {
-    if(request.user.role === "admin"){
-        Review.find().then((reviews) => {
-            response.json(reviews)
-        })
-    }else{
-        Review.find({isApproved : true}).then((reviews) => {
-            response.json(reviews)
+export const getReviews = async(request, response) => {
+    try{
+        if(request.user){
+            if(request.user.role === "admin"){
+                const allReviews = await Review.find()
+                return response.status(200).json(allReviews)
+            }   
+        }
+
+        const approvedReviews = await Review.find({isApproved : true})
+        return response.status(200).json(approvedReviews)
+
+    }catch(error){
+        return response.status(500).json({
+            message: "Reviews fetching fails"
         })
     }
 }

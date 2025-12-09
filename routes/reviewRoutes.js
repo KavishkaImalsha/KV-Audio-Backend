@@ -5,7 +5,7 @@ import { UserAuthMiddleware } from "../middlewares/UserAuthMiddleware.js"
 const reviewRoutes = express.Router()
 
 reviewRoutes.post('/', UserAuthMiddleware,addReview)
-reviewRoutes.get('/', UserAuthMiddleware,getReviews)
+reviewRoutes.get('/', getReviews)
 reviewRoutes.delete('/:reviewId/:email', UserAuthMiddleware,deleteReview)
 reviewRoutes.put('/approve/:reviewId', approveReview)
 
