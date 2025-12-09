@@ -60,6 +60,40 @@ export const userLogin = (request, response) => {
     })
 }
 
+export const getUserDetails = async(request, response) => {
+    try{
+        const user = await User.findOne({email: request.user.email})
+
+        return response.status(200).json(user)
+    }catch(error){
+        return response.json({
+            message: "User data fetch faild"
+        })
+    }
+    
+}
+
+export const updateUser = async(request,response) => {
+    try{
+        const filter = {email: request.user.email}
+        const updateUserData = request.body
+
+        const user = await User.findOneAndUpdate(filter, updateUserData, {
+            new: true,
+            runValidators: true
+        })
+
+        return response.status(200).json({
+            message: "User update succesfully"
+        })
+    }catch(error){
+        return response.json({
+            message: "User update faild"
+        })
+    }
+    
+}
+
 export const isRoleAdmin = (request) => {
     let isAdmin = false
 
