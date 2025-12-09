@@ -94,6 +94,35 @@ export const updateUser = async(request,response) => {
     
 }
 
+export const getAllUsers = async(request, response) => {
+    try{
+        const users = await User.find()
+
+        return response.status(200).json(users)
+    }catch(error){
+        return response.status(500).json({
+            message : "Faild to fetch user data"
+        })
+    }
+}
+
+export const deleteUser = async(request, response) => {
+    const userId = request.params.userId
+
+    try{
+        await User.deleteOne({_id: userId})
+
+        return response.status(200).json({
+            message: "User delete succesfully"
+        })
+    }catch(error){
+        return response.status(500).json({
+            message: "Operation is faild, User not deleted"
+        })
+    }
+
+}
+
 export const isRoleAdmin = (request) => {
     let isAdmin = false
 
