@@ -43,11 +43,9 @@ export const getReviews = async(request, response) => {
 
 export const deleteReview = (request, response) => {
     const reviewId = request.params.reviewId
-    const email = request.params.email
     
     if(request.user.role == "admin"){
         Review.deleteOne({
-            email : email,
             _id : reviewId
         }).then(() => {
             response.json({
@@ -86,13 +84,14 @@ export const deleteReview = (request, response) => {
 
 export const approveReview = (request, response) => {
     const reviewId = request.params.reviewId
-
+    const reviewStatus = request.body.isApproved
+   
     VerifyAdminRole(request, response)
 
     Review.updateOne({
         _id : reviewId
     },{
-        isApproved : true
+        isApproved : reviewStatus
     }).then(() => {
         response.json({
             message : "Review is approved successfully"
