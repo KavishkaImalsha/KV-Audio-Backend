@@ -26,6 +26,7 @@ export const addInquiry = async(request, response) => {
             })
         }
     }catch(error){
+        console.error("❌ BACKEND ERROR:", error);
         return response.status(500).json({
             message : "Internal server error"
         })
