@@ -10,9 +10,16 @@ const inquirySchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    name : {
+        type : String,
+        required : true
+    },
     phoneNumber : {
         type : String,
         required : true
+    },
+    subject : {
+        type: String
     },
     message : {
         type : String,

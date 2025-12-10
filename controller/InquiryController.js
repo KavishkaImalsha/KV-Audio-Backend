@@ -1,6 +1,4 @@
 import Inquiry from "../model/Inquiry.js"
-import User from "../model/User.js"
-import { UserAuth } from "../validations/UserAuth.js"
 import { isRoleAdmin, isRoleCustomer } from "./UserController.js"
 
 export const addInquiry = async(request, response) => {
@@ -35,7 +33,6 @@ export const addInquiry = async(request, response) => {
 
 export const getInquiries = async (request, response) => {
     try{
-        UserAuth(request, response)
         let inquries
         if(isRoleCustomer(request)){
             inquries = await Inquiry.find({email : request.user.email})
@@ -56,8 +53,6 @@ export const getInquiries = async (request, response) => {
 
 export const deleteInquiry = async (request, response) => {
     try{
-        UserAuth(request, response)
-
         const inquiryId = request.params.id
 
         if(isRoleAdmin(request)){
@@ -96,8 +91,6 @@ export const deleteInquiry = async (request, response) => {
 
 export const updateInquiry = async(request, response) => {
     try{
-        UserAuth(request, response)
-
         const inquiryId = request.params.id
         const data = request.body
 

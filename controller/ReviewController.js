@@ -1,10 +1,7 @@
 import Review from "../model/Review.js"
 import VerifyAdminRole from "../validations/VerifyAdminRole.js"
-import { UserAuth } from "../validations/UserAuth.js"
 
 export const addReview = (request, response) => {
-    UserAuth(request, response)
-
     const data = request.body
 
     data.email = request.user.email
@@ -25,16 +22,21 @@ export const addReview = (request, response) => {
 
 }
 
-export const getReviews = (request, response) => {
-    UserAuth(request, response)
+export const getReviews = async(request, response) => {
+    try{
+        if(request.user){
+            if(request.user.role === "admin"){
+                const allReviews = await Review.find()
+                return response.status(200).json(allReviews)
+            }   
+        }
 
-    if(request.user.role === "admin"){
-        Review.find().then((reviews) => {
-            response.json(reviews)
-        })
-    }else{
-        Review.find({isApproved : true}).then((reviews) => {
-            response.json(reviews)
+        const approvedReviews = await Review.find({isApproved : true})
+        return response.status(200).json(approvedReviews)
+
+    }catch(error){
+        return response.status(500).json({
+            message: "Reviews fetching fails"
         })
     }
 }
@@ -42,8 +44,6 @@ export const getReviews = (request, response) => {
 export const deleteReview = (request, response) => {
     const reviewId = request.params.reviewId
     const email = request.params.email
-
-    UserAuth(request, response)
     
     if(request.user.role == "admin"){
         Review.deleteOne({

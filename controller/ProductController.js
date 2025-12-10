@@ -1,39 +1,39 @@
 import Product from "../model/Product.js"
-import { UserAuth } from "../validations/UserAuth.js"
-import VerifyAdminRole from "../validations/VerifyAdminRole.js"
+import { isRoleAdmin } from "./UserController.js"
 
 export const addProduct = (request, response) => {
-    //check there was token
-    UserAuth(request, response)
-
-    VerifyAdminRole(request, response)
-
     const productDetails = request.body
-    const product = new Product(productDetails)
-    product.save().then(() => {
-        response.json({
-            message : "Product add successfully"
+    
+    if(isRoleAdmin(request)){
+        const product = new Product(productDetails)
+        product.save().then(() => {
+            return response.json({
+                message : "Product add successfully"
+            })
+        }).catch((error) => {
+            return response.status(500).json({
+                message : "Product not added"
+            })
         })
-    }).catch((error) => {
-        response.status(500).json({
-            error : "Product not added"
+    }else{
+            return response.status(400).json({
+            message: "You can't perform this action"
         })
-    })
+    }
 }
 
 export const getProducts = async (request, response) => {
-    let isAdmin = true
     let products
-    UserAuth(request, response)
 
-    if(request.user.role != 'admin'){
-        isAdmin = false
-    }
     try{
-        isAdmin ? products = await Product.find() : products = await Product.find({availability : true})
-        response.json(products)
+        if(request?.user?.role === 'admin'){
+            products = await Product.find()
+        }else{
+            products = await Product.find({availability : true})
+        }
+        return response.json(products)
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Invernal server error! Please try again."
         })
     }
@@ -41,18 +41,21 @@ export const getProducts = async (request, response) => {
 
 export const updateProduct = async (request, response) => {
     const productId = request.params.productId
-    UserAuth(request, response)
-
     try{
-        VerifyAdminRole(request, response)
-    
-        await Product.updateOne({productId : productId}, request.body)
+        if(isRoleAdmin(request)){
+            await Product.updateOne({productId : productId}, request.body)
 
-        response.json({
-            message : "Product updated successfully"
+            return response.json({
+                message : "Product updated successfully"
+            })
+        }else{
+            return response.status(400).json({
+            message: "You can't perform this action"
         })
+    }
+        
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Invernal server error! Please try again."
         })
     }
@@ -61,20 +64,54 @@ export const updateProduct = async (request, response) => {
 export const deleteProduct = async(request, response) => {
     const productId = request.params.productId
 
-    UserAuth(request, response)
-
     try{
-        VerifyAdminRole(request, response)
-        
-        await Product.deleteOne({_id: productId})
+        if(isRoleAdmin(request)){
+            await Product.deleteOne({_id: productId})
 
-        response.json({
-            message: "Product successfully delete"
+            return response.json({
+                message: "Product successfully delete"
+            })
+        }else{
+            return response.status(400).json({
+            message: "You can't perform this action"
         })
-
+    }
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message: "Invernal server error! Please try again."
+        })
+    }
+}
+
+export const getProduct = async(request, response) => {
+    try{
+        const productId = request.params.productId
+        
+        const product = await Product.findOne({_id: productId})
+        return response.json(product)
+    }catch(error){
+        return response.status(500).json({
+            error : error
+        })
+    }
+}
+
+export const getNewArrivals = async(request, response) => {
+    try{
+        const products =  await Product.find({availability: true}).sort({_id: -1}).limit(8)
+
+        if(products == null){
+            return response.status(500).json({
+                message: "Products not available"
+            })
+        }else{
+            return response.status(200).json({
+                products: products
+            })
+        }
+    }catch(error){
+        return response.status(500).json({
+            message: "Something went wrong"
         })
     }
 }
