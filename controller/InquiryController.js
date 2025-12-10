@@ -6,6 +6,7 @@ export const addInquiry = async(request, response) => {
         if(isRoleCustomer(request)){
             const data = request.body
             data.email = request.user.email
+            data.name = request.user.firstName + " " + request.user.lastName
             data.phoneNumber = request.user.phoneNumber
 
             const lastRecord = await Inquiry.find().sort({id : -1}).limit(1)
@@ -16,16 +17,17 @@ export const addInquiry = async(request, response) => {
 
             const inquirySaveResp = await newInquiry.save()
 
-            response.json({
+            return response.json({
                 message : "Inquiry successfully added"
             })   
         }else{
-            response.status(401).json({
+            return response.status(401).json({
                 message : "You can't perform this action"
             })
         }
     }catch(error){
-        response.status(500).json({
+        console.error("❌ BACKEND ERROR:", error);
+        return response.status(500).json({
             message : "Internal server error"
         })
     }
@@ -41,11 +43,11 @@ export const getInquiries = async (request, response) => {
             inquries = await Inquiry.find()
         }
 
-        response.json({
+        return response.json({
             inquiries : inquries
         })
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Internal server error"
         })
     }
@@ -58,7 +60,7 @@ export const deleteInquiry = async (request, response) => {
         if(isRoleAdmin(request)){
             await Inquiry.deleteOne({id : inquiryId})
 
-            response.json({
+            return response.json({
                 message : "Inquiry successfully deleted"
             })
         }else if(isRoleCustomer(request)){
@@ -68,22 +70,22 @@ export const deleteInquiry = async (request, response) => {
                 if(inquiry[0].email == request.user.email){
                     await Inquiry.deleteOne({id : inquiryId})
 
-                    response.json({
+                    return response.json({
                         message : "Inquiry successfully deleted"
                     })
                 }else{
-                    response.status(403).json({
+                    return response.status(403).json({
                         message : "You are not authorize to perform this action"
                     })
                 }
             }else{
-                response.status(404).json({
+                return response.status(404).json({
                     message : "Inquiry not found"
                 })
             }
         }
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Internal server error"
         })
     }
@@ -97,7 +99,7 @@ export const updateInquiry = async(request, response) => {
         if(isRoleAdmin(request)){
             await Inquiry.updateOne({id : inquiryId}, data)
 
-            response.json({
+            return response.json({
                 message : "Inquiry successfully updated"
             })
         }else if(isRoleCustomer(request)){
@@ -107,22 +109,22 @@ export const updateInquiry = async(request, response) => {
                 if(inquiry[0].email == request.user.email){
                     await Inquiry.updateOne({id : inquiryId}, {message : data.message})
 
-                    response.json({
+                    return response.json({
                         message : "Inquiry successfully updated"
                     })
                 }else{
-                    response.status(403).json({
+                    return response.status(403).json({
                         message : "You are not authorize to perform this action"
                     })
                 }
             }else{
-                response.status(404).json({
+                return response.status(404).json({
                     message : "Inquiry is not found"
                 })
             }
         }
     }catch(error){
-        response.status(500).json({
+        return response.status(500).json({
             message : "Internal server error"
         })
     }
